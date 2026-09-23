@@ -60,7 +60,7 @@ class User extends Authenticatable
         return $this->hasMany(Client::class);
     }
 
-    public function invoces(): HasMany
+    public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);
     }
