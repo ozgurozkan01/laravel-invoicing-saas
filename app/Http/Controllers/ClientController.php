@@ -32,9 +32,14 @@ class ClientController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|string|max:20',
+            'name'         => 'required|string|max:255',
+            'email'        => 'required|email|max:255',
+            'phone'        => 'required|string|max:20',
+            'company_name' => 'nullable|string|max:255',
+            'address'      => 'required|string|max:500',
+            'city'         => 'required|string|max:100',
+            'state'        => 'required|string|max:100',
+            'postal_code'  => 'required|string|max:20',
         ]);
 
         Auth::user()->clients()->create($validated);
