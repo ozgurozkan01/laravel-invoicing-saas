@@ -13,7 +13,11 @@ class Invoice extends Model
         'client_id',
         'amount',
         'status',
-        'due_date'
+        'due_date',
+        'billing_address',	
+        'billing_city',	
+        'billing_state',
+        'billing_postal_code'	
     ];
 
     public function user(): BelongsTo 

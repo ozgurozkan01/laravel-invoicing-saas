@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,8 +23,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('clients', ClientController::class)->except(['show']);
+    Route::resource('/invoices', InvoiceController::class)->except(['store']);
 
-    // Route::post('/invoices', [InvoiceController::class, 'store'])->middleware(['invoice.limit']);
+    Route::post('/invoices', [InvoiceController::class, 'store'])->middleware('invoice.limit')->name('invoices.store');
 });
 
 require __DIR__.'/auth.php';
