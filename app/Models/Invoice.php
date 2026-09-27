@@ -20,6 +20,13 @@ class Invoice extends Model
         'billing_postal_code'	
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'due_date' => 'date',
+        ];
+    }
+
     public function user(): BelongsTo 
     { 
         return $this->belongsTo(User::class); 

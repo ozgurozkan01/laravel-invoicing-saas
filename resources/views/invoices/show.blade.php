@@ -134,7 +134,7 @@
                         </div>
                         <div class="py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
                             <span class="text-xs text-gray-500 dark:text-gray-400">Due Date</span>
-                            <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($invoice->due_date)->format('M d, Y') }}</span>
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ $invoice->due_date->format('M d, Y') }}</span>
                         </div>
 
                         <!-- Line Item Count -->

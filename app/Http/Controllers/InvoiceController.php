@@ -68,7 +68,7 @@ class InvoiceController extends Controller
             $invoice->update(['amount' => $total]);
         });
 
-        return redirect()->route('invoices.index')->with('success', 'Invoice is created!');
+        return redirect()->route('invoices.index')->with('success', 'Invoice is created successfully!');
     }
 
     /**
@@ -86,7 +86,16 @@ class InvoiceController extends Controller
      */
     public function edit(Invoice $invoice)
     {
-        //
+        $this->authorize('update', $invoice);
+
+        if ($invoice->status !== 'draft') 
+        {
+            return redirect()->route('invoices.show', $invoice)->with('error', 'Only draft invoices can be sent!');
+        }
+
+        $clients = Auth::user()->clients;
+
+        return view('invoices.edit', compact('invoice', 'clients'));
     }
 
     /**
@@ -94,7 +103,48 @@ class InvoiceController extends Controller
      */
     public function update(Request $request, Invoice $invoice)
     {
-        //
+        $this->authorize('update', $invoice);
+
+        if ($invoice->status != 'draft') 
+        {
+            return redirect()->route('invoices.show', $invoice)->with('error', 'Only draft invoices can be sent!');
+        }
+
+        $validated = $request->validate([
+            'client_id'           => 'required|exists:clients,id',
+            'due_date'            => 'required|date|after_or_equal:today',
+            'items'               => 'required|array|min:1',
+            'items.*.description' => 'required|string|max:255',
+            'items.*.quantity'    => 'required|numeric|min:0.01',
+            'items.*.unit'        => 'nullable|string|max:50',
+            'items.*.unit_price'  => 'required|numeric|min:0',
+        ]);
+
+        $client = Client::findOrFail($validated['client_id']);
+        $this->authorize('view', $client);
+
+        DB::transaction(function () use ($invoice, $client, $validated) {
+            $invoice->update([
+                'client_id'           => $validated['client_id'],
+                'due_date'            => $validated['due_date'],
+                'billing_address'     => $client->address,
+                'billing_city'        => $client->city,
+                'billing_state'       => $client->state,
+                'billing_postal_code' => $client->postal_code,
+            ]);
+
+            $invoice->invoiceItems()->delete();
+
+            foreach ($validated['items'] as $item) 
+            {
+                $invoice->invoiceItems()->create($item);
+            }
+
+            $total = $invoice->invoiceItems->sum(fn ($item) => $item->quantity * $item->unit_price);
+            $invoice->update(['amount' => $total]);
+        });
+
+        return redirect()->route('invoices.show', $invoice)->with('success', 'Invoice is updated successfully!');
     }
 
     /**
