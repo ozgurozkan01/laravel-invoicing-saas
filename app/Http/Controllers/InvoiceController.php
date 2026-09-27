@@ -37,7 +37,7 @@ class InvoiceController extends Controller
     {
         $validated = $request->validate([
             'client_id' => 'required|exists:clients,id',
-            'due_date' => 'required|date',
+            'due_date' => 'required|date|after_or_equal:today',
             'items' => 'required|array|min:1',
             'items.*.description' => 'required|string|max:255',
             'items.*.quantity' => 'required|numeric|min:0.01',
@@ -102,6 +102,10 @@ class InvoiceController extends Controller
      */
     public function destroy(Invoice $invoice)
     {
-        //
+        $this->authorize('delete', $invoice);
+
+        $invoice->delete();
+
+        return redirect()->route('invoices.index')->with('success', 'Invoice is deleted successfully!');
     }
 }
