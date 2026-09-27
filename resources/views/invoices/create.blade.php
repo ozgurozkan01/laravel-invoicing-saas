@@ -24,6 +24,12 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
+            @if (session('error'))
+                <div class="flex items-center gap-3 p-4 mb-6 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300 rounded-xl text-sm">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <form
                 method="POST"
                 action="{{ route('invoices.store') }}"
