@@ -185,16 +185,91 @@
                                                 class="block w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 transition"
                                             >
                                         </div>
-                                        <div class="col-span-4 sm:col-span-2">
-                                            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Unit</label>
-                                            <input
-                                                type="text"
-                                                x-model="item.unit"
-                                                :name="'items[' + index + '][unit]'"
-                                                placeholder="hour, pcs..."
-                                                class="block w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 transition"
-                                            >
-                                        </div>
+
+                                        <div class="col-span-4 sm:col-span-2" x-data="{ isCustom: false }">
+    <div class="flex items-center justify-between mb-1.5">
+        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            Unit
+        </label>
+        
+        <!-- Custom modundaysa geriye (listeye) dönme butonu -->
+        <button 
+            type="button" 
+            x-show="isCustom" 
+            x-cloak
+            @click="isCustom = false; item.unit = 'pcs'"
+            class="text-[10px] font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 transition-colors cursor-pointer"
+        >
+            ← Select from list
+        </button>
+    </div>
+
+    <!-- 1. SEÇENEK LİSTESİ (SELECT BOX) -->
+    <div x-show="!isCustom" class="relative">
+        <select
+            x-model="item.unit"
+            :name="!isCustom ? 'items[' + index + '][unit]' : ''"
+            @change="if ($event.target.value === '__custom__') { isCustom = true; item.unit = ''; }"
+            class="appearance-none block w-full pl-3 pr-8 py-2 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition cursor-pointer"
+        >
+            <option value="" disabled>Select unit...</option>
+
+            <!-- Quantity & Items -->
+            <optgroup label="Count & Quantity">
+                <option value="pcs">pcs (pieces)</option>
+                <option value="unit">unit</option>
+                <option value="box">box</option>
+                <option value="pack">pack</option>
+                <option value="set">set</option>
+            </optgroup>
+
+            <!-- Time -->
+            <optgroup label="Time & Services">
+                <option value="hr">hr (hour)</option>
+                <option value="day">day</option>
+                <option value="wk">wk (week)</option>
+                <option value="mo">mo (month)</option>
+                <option value="yr">yr (year)</option>
+            </optgroup>
+
+            <!-- Weight & Volume -->
+            <optgroup label="Measurement">
+                <option value="kg">kg (kilogram)</option>
+                <option value="g">g (gram)</option>
+                <option value="lb">lb (pound)</option>
+                <option value="m">m (meter)</option>
+                <option value="m²">m² (sq meter)</option>
+                <option value="l">l (liter)</option>
+            </optgroup>
+
+            <!-- Custom Action -->
+            <optgroup label="Other">
+                <option value="__custom__" class="font-semibold text-indigo-600 dark:text-indigo-400">
+                    ✍️ Custom / Type manually...
+                </option>
+            </optgroup>
+        </select>
+
+        <!-- Modern Chevron / Dropdown Oku -->
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400 dark:text-slate-500">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+        </div>
+    </div>
+
+    <!-- 2. MANUEL ELLE GİRİŞ ALANI (CUSTOM INPUT) -->
+    <div x-show="isCustom" x-cloak class="relative">
+        <input
+            type="text"
+            x-model="item.unit"
+            :name="isCustom ? 'items[' + index + '][unit]' : ''"
+            placeholder="e.g. project, pallet, oz..."
+            class="block w-full px-3 py-2 text-xs font-medium rounded-lg border border-indigo-300 dark:border-indigo-500/50 bg-indigo-50/20 dark:bg-indigo-950/20 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
+        >
+    </div>
+</div>
+
                                         <div class="col-span-4 sm:col-span-3">
                                             <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Unit Price</label>
                                             <input
@@ -234,30 +309,10 @@
                                 Add Line Item
                             </button>
                         </div>
-
-                        <!-- 3. KART: Vade Tarihi -->
-                        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 sm:p-7 shadow-sm">
-                            <h3 class="text-base font-bold text-gray-900 dark:text-white mb-1">Due Date</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-5">When should this invoice be paid by?</p>
-
-                            <input
-                                id="due_date"
-                                type="date"
-                                name="due_date"
-                                value="{{ old('due_date', now()->addDays(14)->format('Y-m-d')) }}"
-                                required
-                                class="block w-full sm:w-64 px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50 text-gray-900 dark:text-white text-sm focus:bg-white dark:focus:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent transition"
-                            >
-                            @error('due_date')
-                                <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-
                     </div>
 
                     <!-- ================= SAĞ ALAN / ÖZET PANELİ (4 KOLON - STICKY) ================= -->
                     <div class="lg:col-span-4 sticky top-6 space-y-6">
-
                         <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 shadow-sm">
                             <div class="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-gray-700">
                                 <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Invoice Summary</span>
@@ -272,6 +327,22 @@
                             <div class="py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center text-xs">
                                 <span class="text-gray-500 dark:text-gray-400">Line Items:</span>
                                 <span class="font-semibold text-gray-900 dark:text-white" x-text="items.length"></span>
+                            </div>
+
+                            <div class="py-4 border-b border-gray-100 dark:border-gray-700">
+                                <label for="due_date" class="text-xs text-gray-500 dark:text-gray-400 block mb-1.5">Due Date:</label>
+                                <input
+                                    id="due_date"
+                                    type="date"
+                                    name="due_date"
+                                    min="{{ now()->format('Y-m-d') }}"
+                                    value="{{ old('due_date', now()->addDays(14)->format('Y-m-d')) }}"
+                                    required
+                                    class="block w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 transition"
+                                >
+                                @error('due_date')
+                                    <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- Canlı Toplam Tutar (kalemlerden otomatik hesaplanır) -->
@@ -290,10 +361,6 @@
                                     </svg>
                                     <span>Issue Invoice</span>
                                 </button>
-
-                                <a href="{{ route('invoices.index') }}" class="w-full block text-center py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition">
-                                    Discard Draft
-                                </a>
                             </div>
 
                         </div>

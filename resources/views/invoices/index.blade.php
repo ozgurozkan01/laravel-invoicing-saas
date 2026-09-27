@@ -41,7 +41,8 @@
                                 <th class="px-6 py-4">Amount</th>
                                 <th class="px-6 py-4">Status</th>
                                 <th class="px-6 py-4">Due Date</th>
-                                <th class="px-6 py-4 text-right">Actions</th>
+                                <th class="px-6 py-4">Issue On</th>
+                                <th class="px-6 py-4 text-center whitespace-nowrap w-px">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
@@ -75,7 +76,7 @@
                                         ${{ number_format($invoice->amount, 2) }}
                                     </td>
 
-                                    <!-- Status Badges: draft, sent, paid, overdue -->
+                                    <!-- Status Badges -->
                                     <td class="px-6 py-4">
                                         @if ($invoice->status === 'paid')
                                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
@@ -96,25 +97,47 @@
                                         @endif
                                     </td>
 
+                                    <!-- Due Date -->
                                     <td class="px-6 py-4 text-xs text-gray-500 dark:text-gray-400">
                                         {{ \Carbon\Carbon::parse($invoice->due_date)->format('M d, Y') }}
                                     </td>
 
+                                    <!-- Issue On (Dolu alan) -->
+                                    <td class="px-6 py-4 text-xs text-gray-500 dark:text-gray-400">
+                                        {{ \Carbon\Carbon::parse($invoice->created_at)->format('M d, Y') }}
+                                    </td>
+
+                                    <!-- Modern Actions (İkon Butonlar) -->
                                     <td class="px-6 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-2">
-                                            <a href="{{ route('invoices.show', $invoice) }}" class="px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
-                                                View
+                                        <div class="flex items-center justify-end gap-1">
+                                            <!-- View (Page/Document Icon) -->
+                                            <a href="{{ route('invoices.show', $invoice) }}" 
+                                               title="View Invoice"
+                                               class="p-2 text-gray-400 hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700/60 rounded-lg transition-colors">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
                                             </a>
 
-                                            <a href="{{ route('invoices.edit', $invoice) }}" class="px-3 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg transition">
-                                                Edit
+                                            <!-- Edit (Pencil Icon) -->
+                                            <a href="{{ route('invoices.edit', $invoice) }}" 
+                                               title="Edit Invoice"
+                                               class="p-2 text-indigo-400 hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg transition-colors">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
                                             </a>
 
+                                            <!-- Delete (Trash Icon) -->
                                             <form action="{{ route('invoices.destroy', $invoice) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this invoice?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="px-3 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition">
-                                                    Delete
+                                                <button type="submit" 
+                                                        title="Delete Invoice"
+                                                        class="p-2 text-rose-400 hover:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
                                                 </button>
                                             </form>
                                         </div>
@@ -122,7 +145,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-6 py-16 text-center">
+                                    <td colspan="7" class="px-6 py-16 text-center">
                                         <div class="flex flex-col items-center justify-center">
                                             <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 mb-3">
                                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
