@@ -120,6 +120,8 @@
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800">Sent</span>
                             @elseif ($invoice->status === 'overdue')
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800">Overdue</span>
+                            @elseif ($invoice->status === 'cancelled')
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-200 dark:bg-red-500 text-red-600 dark:text-red-200 border border-red-400 dark:border-red-200">Cancelled</span>
                             @else
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600">Draft</span>
                             @endif
@@ -155,18 +157,50 @@
                                 ${{ number_format($invoice->amount, 2) }}
                             </div>
                         </div>
+                        <div class="pt-2 space-y-3">
+                            @if ($invoice->status === 'draft')
+                                <form action="{{ route('invoices.mark-as-sent', $invoice) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-sm shadow-indigo-600/20 transition cursor-pointer">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                        </svg>
+                                        <span>Mark as Sent</span>
+                                    </button>
+                                </form>
+                            @endif
 
-                        <div class="pt-2 space-y-2.5">
-                            <a href="{{ route('invoices.edit', $invoice) }}" class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                                Edit Invoice
-                            </a>
-                            <form action="{{ route('invoices.destroy', $invoice) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this invoice?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="w-full py-2.5 text-xs font-medium text-rose-600 hover:text-rose-700 transition">
-                                    Delete Invoice
-                                </button>
-                            </form>
+                            @if ($invoice->status === 'draft')
+                                <a href="{{ route('invoices.edit', $invoice) }}" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-200 text-xs font-semibold hover:bg-zinc-50 dark:hover:bg-zinc-700 transition">
+                                    <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                    </svg>
+                                    <span>Edit Invoice</span>
+                                </a>
+                            @endif
+
+
+                            <!-- 3. DESTRUCTIVE / TERTIARY ACTIONS (Ayrı ve Zarif) -->
+                            <div class="pt-2 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-center gap-4">
+                                @if (in_array($invoice->status, ['sent', 'overdue']))
+                                    <form action="{{ route('invoices.cancel', $invoice) }}" method="POST" onsubmit="return confirm('Cancel this invoice? Cancelled invoices are returned to your quota.')">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="text-xs font-medium text-amber-500 hover:text-amber-400 transition cursor-pointer">
+                                            Cancel Invoice
+                                        </button>
+                                    </form>
+                                @endif
+
+                                <form action="{{ route('invoices.destroy', $invoice) }}" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this invoice?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-xs font-medium text-rose-500/80 hover:text-rose-400 transition cursor-pointer">
+                                        Delete Invoice
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
 

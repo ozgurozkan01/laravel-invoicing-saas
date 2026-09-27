@@ -23,9 +23,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('clients', ClientController::class)->except(['show']);
-    Route::resource('/invoices', InvoiceController::class)->except(['store']);
 
+    Route::resource('/invoices', InvoiceController::class)->except(['store']);
     Route::post('/invoices', [InvoiceController::class, 'store'])->middleware('invoice.limit')->name('invoices.store');
+    Route::patch('invoices/{invoice}/cancel', [InvoiceController::class, 'cancel'])->name('invoices.cancel');
+    Route::patch('invoices/{invoice}/mark-as-sent', [InvoiceController::class, 'markAsSent'])->name('invoices.mark-as-sent');
 });
 
 require __DIR__.'/auth.php';

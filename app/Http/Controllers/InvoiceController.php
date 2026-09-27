@@ -108,4 +108,27 @@ class InvoiceController extends Controller
 
         return redirect()->route('invoices.index')->with('success', 'Invoice is deleted successfully!');
     }
+
+    public function cancel(Invoice $invoice)
+    {
+        $this->authorize('update', $invoice);
+
+        $invoice->update(['status' => 'cancelled']);
+
+        return redirect()->route('invoices.show', $invoice)->with('success', 'The invoice has been canceled successfully!');
+    }
+
+    public function markAsSent(Invoice $invoice)
+    {
+        $this->authorize('update', $invoice);
+
+        if ($invoice->status !== 'draft')
+        {
+            return redirect()->route('invoices.show', $invoice)->with('error', 'Only draft invoices can be sent!');
+        }
+
+        $invoice->update(['status' => 'sent']);
+
+        return redirect()->route('invoices.show', $invoice)->with('success', 'The invoice has been marked as sent!');
+    }
 }

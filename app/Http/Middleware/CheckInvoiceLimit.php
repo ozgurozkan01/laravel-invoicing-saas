@@ -23,7 +23,7 @@ class CheckInvoiceLimit
             return $next($request);
         }
 
-        $userInvoiceCount = $user->invoices()->count();
+        $userInvoiceCount = $user->invoices()->where('status', '!=', 'cancelled')->count();
 
         if ($userInvoiceCount >= $userPlan->max_invoice_limit) {
             return redirect()
