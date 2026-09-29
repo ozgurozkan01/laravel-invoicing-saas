@@ -14,10 +14,15 @@ class Client extends Model
         'email',
         'phone',
         'company_name',
+        'country',
         'address',
         'city',
         'state',
-        'postal_code'
+        'postal_code',
+        'client_type',
+        'identity_number',
+        'tax_office',
+        'tax_number',
     ];
 
     public function user(): BelongsTo
