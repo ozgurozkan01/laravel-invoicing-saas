@@ -36,13 +36,14 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'client_id' => 'required|exists:clients,id',
-            'due_date' => 'required|date|after_or_equal:today',
-            'items' => 'required|array|min:1',
-            'items.*.description' => 'required|string|max:255',
-            'items.*.quantity' => 'required|numeric|min:0.01',
-            'items.*.unit' => 'nullable|string|max:50',
-            'items.*.unit_price' => 'required|numeric|min:0',
+            'client_id'             => 'required|exists:clients,id',
+            'title'                 => 'required|string|max:50',
+            'due_date'              => 'required|date|after_or_equal:today',
+            'items'                 => 'required|array|min:1',
+            'items.*.description'   => 'required|string|max:255',
+            'items.*.quantity'      => 'required|numeric|min:0.01',
+            'items.*.unit'          => 'nullable|string|max:50',
+            'items.*.unit_price'    => 'required|numeric|min:0',
         ]);
 
         $client = Client::findOrFail($validated['client_id']);
@@ -52,6 +53,7 @@ class InvoiceController extends Controller
             $invoice = Auth::user()->invoices()->create([
                 'client_id'           => $validated['client_id'],
                 'due_date'            => $validated['due_date'],
+                'title'               => $validated['title'],
                 'status'              => 'draft',
                 'amount'              => 0,
                 'billing_address'     => $client->address,
@@ -112,6 +114,7 @@ class InvoiceController extends Controller
 
         $validated = $request->validate([
             'client_id'           => 'required|exists:clients,id',
+            'title'               => 'required|string|max:50',
             'due_date'            => 'required|date|after_or_equal:today',
             'items'               => 'required|array|min:1',
             'items.*.description' => 'required|string|max:255',
@@ -126,6 +129,7 @@ class InvoiceController extends Controller
         DB::transaction(function () use ($invoice, $client, $validated) {
             $invoice->update([
                 'client_id'           => $validated['client_id'],
+                'title'           => $validated['title'],
                 'due_date'            => $validated['due_date'],
                 'billing_address'     => $client->address,
                 'billing_city'        => $client->city,

@@ -34,6 +34,7 @@
                 method="POST"
                 action="{{ route('invoices.update', $invoice) }}"
                 x-data="{
+                    title: {{ Js::from(old('title', $invoice->title ?? '')) }},
                     clients: {{ Js::from($clients) }},
                     selectedClientId: '{{ old('client_id', $invoice->client_id) }}',
                     sameAsClient: true,
@@ -66,9 +67,25 @@
 
                     <!-- ================= SOL ALAN (8 KOLON) ================= -->
                     <div class="lg:col-span-8 space-y-6">
-
                         <!-- 1. KART: Müşteri Seçimi & Akıllı Fatura Adresi -->
                         <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 sm:p-7 shadow-sm">
+                            <div class="mb-6 pb-6 border-b border-gray-100 dark:border-gray-700">
+                                <label for="title" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">
+                                    Invoice Title / Subject <span class="text-[11px] text-gray-400 font-normal lowercase">(optional)</span>
+                                </label>
+                                <input
+                                    id="title"
+                                    type="text"
+                                    name="title"
+                                    x-model="title"
+                                    placeholder="e.g. Website Redesign Project, Monthly Retainer - Oct"
+                                    class="block w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50 text-gray-900 dark:text-white text-sm focus:bg-white dark:focus:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent transition"
+                                >
+                                @error('title')
+                                    <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                             <div class="flex items-center justify-between mb-4">
                                 <div>
                                     <h3 class="text-base font-bold text-gray-900 dark:text-white">Billed To (Client)</h3>
@@ -197,88 +214,75 @@
                                         </div>
 
                                         <div class="col-span-4 sm:col-span-2" x-data="{ isCustom: false }">
-    <div class="flex items-center justify-between mb-1.5">
-        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Unit
-        </label>
-        
-        <!-- Custom modundaysa geriye (listeye) dönme butonu -->
-        <button 
-            type="button" 
-            x-show="isCustom" 
-            x-cloak
-            @click="isCustom = false; item.unit = 'pcs'"
-            class="text-[10px] font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 transition-colors cursor-pointer"
-        >
-            ← Select from list
-        </button>
-    </div>
+                                            <div class="flex items-center justify-between mb-1.5">
+                                                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                                    Unit
+                                                </label>
+                                                <button 
+                                                    type="button" 
+                                                    x-show="isCustom" 
+                                                    x-cloak
+                                                    @click="isCustom = false; item.unit = 'pcs'"
+                                                    class="text-[10px] font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 transition-colors cursor-pointer"
+                                                >
+                                                    ← List
+                                                </button>
+                                            </div>
 
-    <!-- 1. SEÇENEK LİSTESİ (SELECT BOX) -->
-    <div x-show="!isCustom" class="relative">
-        <select
-            x-model="item.unit"
-            :name="!isCustom ? 'items[' + index + '][unit]' : ''"
-            @change="if ($event.target.value === '__custom__') { isCustom = true; item.unit = ''; }"
-            class="appearance-none block w-full pl-3 pr-8 py-2 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition cursor-pointer"
-        >
-            <option value="" disabled>Select unit...</option>
+                                            <div x-show="!isCustom" class="relative">
+                                                <select
+                                                    x-model="item.unit"
+                                                    :name="!isCustom ? 'items[' + index + '][unit]' : ''"
+                                                    @change="if ($event.target.value === '__custom__') { isCustom = true; item.unit = ''; }"
+                                                    class="appearance-none block w-full pl-3 pr-8 py-2 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition cursor-pointer"
+                                                >
+                                                    <option value="" disabled>Select...</option>
+                                                    <optgroup label="Count & Quantity">
+                                                        <option value="pcs">pcs (pieces)</option>
+                                                        <option value="unit">unit</option>
+                                                        <option value="box">box</option>
+                                                        <option value="pack">pack</option>
+                                                        <option value="set">set</option>
+                                                    </optgroup>
+                                                    <optgroup label="Time & Services">
+                                                        <option value="hr">hr (hour)</option>
+                                                        <option value="day">day</option>
+                                                        <option value="wk">wk (week)</option>
+                                                        <option value="mo">mo (month)</option>
+                                                        <option value="yr">yr (year)</option>
+                                                    </optgroup>
+                                                    <optgroup label="Measurement">
+                                                        <option value="kg">kg (kilogram)</option>
+                                                        <option value="g">g (gram)</option>
+                                                        <option value="lb">lb (pound)</option>
+                                                        <option value="m">m (meter)</option>
+                                                        <option value="m²">m² (sq meter)</option>
+                                                        <option value="l">l (liter)</option>
+                                                    </optgroup>
+                                                    <optgroup label="Other">
+                                                        <option value="__custom__" class="font-semibold text-indigo-600 dark:text-indigo-400">
+                                                            ✍️ Custom...
+                                                        </option>
+                                                    </optgroup>
+                                                </select>
 
-            <!-- Quantity & Items -->
-            <optgroup label="Count & Quantity">
-                <option value="pcs">pcs (pieces)</option>
-                <option value="unit">unit</option>
-                <option value="box">box</option>
-                <option value="pack">pack</option>
-                <option value="set">set</option>
-            </optgroup>
+                                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400 dark:text-slate-500">
+                                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                    </svg>
+                                                </div>
+                                            </div>
 
-            <!-- Time -->
-            <optgroup label="Time & Services">
-                <option value="hr">hr (hour)</option>
-                <option value="day">day</option>
-                <option value="wk">wk (week)</option>
-                <option value="mo">mo (month)</option>
-                <option value="yr">yr (year)</option>
-            </optgroup>
-
-            <!-- Weight & Volume -->
-            <optgroup label="Measurement">
-                <option value="kg">kg (kilogram)</option>
-                <option value="g">g (gram)</option>
-                <option value="lb">lb (pound)</option>
-                <option value="m">m (meter)</option>
-                <option value="m²">m² (sq meter)</option>
-                <option value="l">l (liter)</option>
-            </optgroup>
-
-            <!-- Custom Action -->
-            <optgroup label="Other">
-                <option value="__custom__" class="font-semibold text-indigo-600 dark:text-indigo-400">
-                    ✍️ Custom / Type manually...
-                </option>
-            </optgroup>
-        </select>
-
-        <!-- Modern Chevron / Dropdown Oku -->
-        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400 dark:text-slate-500">
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>
-        </div>
-    </div>
-
-    <!-- 2. MANUEL ELLE GİRİŞ ALANI (CUSTOM INPUT) -->
-    <div x-show="isCustom" x-cloak class="relative">
-        <input
-            type="text"
-            x-model="item.unit"
-            :name="isCustom ? 'items[' + index + '][unit]' : ''"
-            placeholder="e.g. project, pallet, oz..."
-            class="block w-full px-3 py-2 text-xs font-medium rounded-lg border border-indigo-300 dark:border-indigo-500/50 bg-indigo-50/20 dark:bg-indigo-950/20 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
-        >
-    </div>
-</div>
+                                            <div x-show="isCustom" x-cloak class="relative">
+                                                <input
+                                                    type="text"
+                                                    x-model="item.unit"
+                                                    :name="isCustom ? 'items[' + index + '][unit]' : ''"
+                                                    placeholder="e.g. project..."
+                                                    class="block w-full px-3 py-2 text-xs font-medium rounded-lg border border-indigo-300 dark:border-indigo-500/50 bg-indigo-50/20 dark:bg-indigo-950/20 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
+                                                >
+                                            </div>
+                                        </div>
 
                                         <div class="col-span-4 sm:col-span-3">
                                             <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Unit Price</label>
@@ -326,7 +330,13 @@
                         <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 shadow-sm">
                             <div class="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-gray-700">
                                 <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Invoice Summary</span>
-                                <span class="font-mono text-xs text-gray-500 dark:text-gray-400 font-medium">#INV-{{ date('Y') }}-AUTO</span>
+                                <span class="font-mono text-xs text-gray-500 dark:text-gray-400 font-medium">#{{ $invoice->invoice_number }}</span>
+                            </div>
+
+                            <!-- Başlık Önizlemesi -->
+                            <div class="py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center text-xs">
+                                <span class="text-gray-500 dark:text-gray-400">Title:</span>
+                                <span class="font-semibold text-gray-900 dark:text-white truncate max-w-[170px]" x-text="title || 'No Title'"></span>
                             </div>
 
                             <div class="py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center text-xs">
@@ -346,7 +356,7 @@
                                     type="date"
                                     name="due_date"
                                     min="{{ now()->format('Y-m-d') }}"
-                                    value="{{ old('due_date', $invoice->due_date->format('Y-m-d')) }}"
+                                    value="{{ old('due_date', $invoice->due_date ? $invoice->due_date->format('Y-m-d') : now()->addDays(14)->format('Y-m-d')) }}"
                                     required
                                     class="block w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 transition"
                                 >
@@ -355,7 +365,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Canlı Toplam Tutar (kalemlerden otomatik hesaplanır) -->
+                            <!-- Canlı Toplam Tutar -->
                             <div class="py-6 text-center border-b border-gray-100 dark:border-gray-700">
                                 <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Total Amount Due</span>
                                 <div class="mt-1 text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
@@ -367,14 +377,13 @@
                             <div class="pt-5 space-y-2.5">
                                 <button type="submit" class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl shadow-md shadow-indigo-500/20 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                     </svg>
                                     <span>Save Changes</span>
                                 </button>
                             </div>
 
                         </div>
-
                     </div>
 
                 </div>

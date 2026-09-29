@@ -5,7 +5,8 @@
                 <div class="flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                     <a href="{{ route('invoices.index') }}" class="hover:text-indigo-600 transition">Invoices</a>
                     <span>/</span>
-                    <span class="text-gray-900 dark:text-white">#INV-{{ str_pad($invoice->id, 5, '0', STR_PAD_LEFT) }}</span>
+                    <span
+                        class="text-gray-900 dark:text-white">#INV-{{ str_pad($invoice->id, 5, '0', STR_PAD_LEFT) }}</span>
                 </div>
                 <h2 class="font-bold text-2xl text-gray-900 dark:text-white leading-tight">
                     Invoice #INV-{{ str_pad($invoice->id, 5, '0', STR_PAD_LEFT) }}
@@ -13,7 +14,8 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <a href="{{ route('invoices.index') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                <a href="{{ route('invoices.index') }}"
+                    class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
                     ← Back to invoices
                 </a>
             </div>
@@ -24,7 +26,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             @if (session('success'))
-                <div class="flex items-center gap-3 p-4 mb-6 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 rounded-xl text-sm">
+                <div
+                    class="flex items-center gap-3 p-4 mb-6 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 rounded-xl text-sm">
                     {{ session('success') }}
                 </div>
             @endif
@@ -35,33 +38,46 @@
                 <div class="lg:col-span-8 space-y-6">
 
                     <!-- KART: Billed To -->
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 sm:p-7 shadow-sm">
+                    <div
+                        class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 sm:p-7 shadow-sm">
                         <h3 class="text-base font-bold text-gray-900 dark:text-white mb-4">Billed To</h3>
 
                         <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 font-bold text-base flex items-center justify-center border border-indigo-100 dark:border-indigo-900/50 flex-shrink-0">
+                            <div
+                                class="w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 font-bold text-base flex items-center justify-center border border-indigo-100 dark:border-indigo-900/50 flex-shrink-0">
                                 {{ strtoupper(substr($invoice->client->name ?? 'NA', 0, 2)) }}
                             </div>
                             <div class="flex-1">
-                                <p class="text-lg font-bold text-gray-900 dark:text-white">{{ $invoice->client->name }}</p>
+                                <p class="text-lg font-bold text-gray-900 dark:text-white">{{ $invoice->client->name }}
+                                </p>
                                 @if (!empty($invoice->client->company_name))
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $invoice->client->company_name }}</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                                        {{ $invoice->client->company_name }}</p>
                                 @endif
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ $invoice->client->email }}</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ $invoice->client->email }}
+                                </p>
                                 @if (!empty($invoice->client->phone))
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $invoice->client->phone }}</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $invoice->client->phone }}
+                                    </p>
                                 @endif
                             </div>
                         </div>
 
                         <div class="mt-5 pt-4 border-t border-gray-100 dark:border-gray-700">
-                            <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Billing Address</h4>
+                            <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Billing
+                                Address</h4>
                             @if (!empty($invoice->billing_address))
                                 <p class="text-sm text-gray-700 dark:text-gray-300">
                                     {{ $invoice->billing_address }}
-                                    @if (!empty($invoice->billing_city)), {{ $invoice->billing_city }}@endif
-                                    @if (!empty($invoice->billing_state)), {{ $invoice->billing_state }}@endif
-                                    @if (!empty($invoice->billing_postal_code)) {{ $invoice->billing_postal_code }}@endif
+                                    @if (!empty($invoice->billing_city))
+                                        , {{ $invoice->billing_city }}
+                                    @endif
+                                    @if (!empty($invoice->billing_state))
+                                        , {{ $invoice->billing_state }}
+                                    @endif
+                                    @if (!empty($invoice->billing_postal_code))
+                                        {{ $invoice->billing_postal_code }}
+                                    @endif
                                 </p>
                             @else
                                 <p class="text-sm text-gray-400 italic">No billing address on file</p>
@@ -70,84 +86,190 @@
                     </div>
 
                     <!-- KART: Line Items -->
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 sm:p-7 shadow-sm">
+                    <div
+                        class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 sm:p-7 shadow-sm">
                         <div class="flex items-center justify-between mb-5">
                             <h3 class="text-base font-bold text-gray-900 dark:text-white">Line Items</h3>
-                            <span class="text-xs font-semibold text-gray-400">{{ $invoice->invoiceItems->count() }} {{ Str::plural('item', $invoice->invoiceItems->count()) }}</span>
+                            <span class="text-xs font-semibold text-gray-400">{{ $invoice->invoiceItems->count() }}
+                                {{ Str::plural('item', $invoice->invoiceItems->count()) }}</span>
                         </div>
 
                         <div class="space-y-3">
                             @foreach ($invoice->invoiceItems as $item)
-                                <div class="grid grid-cols-12 gap-3 items-center p-4 rounded-xl bg-gray-50/50 dark:bg-gray-900/40 border border-gray-100 dark:border-gray-700/60">
+                                <div
+                                    class="grid grid-cols-12 gap-3 items-center p-4 rounded-xl bg-gray-50/50 dark:bg-gray-900/40 border border-gray-100 dark:border-gray-700/60">
                                     <div class="col-span-12 sm:col-span-5">
-                                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-0.5">Description</p>
-                                        <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $item->description }}</p>
+                                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-0.5">
+                                            Description</p>
+                                        <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                            {{ $item->description }}</p>
                                     </div>
                                     <div class="col-span-4 sm:col-span-2">
-                                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-0.5">Qty</p>
-                                        <p class="text-sm text-gray-700 dark:text-gray-300">{{ rtrim(rtrim(number_format($item->quantity, 2), '0'), '.') }} {{ $item->unit ?: '' }}</p>
+                                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-0.5">
+                                            Qty</p>
+                                        <p class="text-sm text-gray-700 dark:text-gray-300">
+                                            {{ rtrim(rtrim(number_format($item->quantity, 2), '0'), '.') }}
+                                            {{ $item->unit ?: '' }}</p>
                                     </div>
                                     <div class="col-span-4 sm:col-span-2">
-                                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-0.5">Unit Price</p>
-                                        <p class="text-sm text-gray-700 dark:text-gray-300">${{ number_format($item->unit_price, 2) }}</p>
+                                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-0.5">
+                                            Unit Price</p>
+                                        <p class="text-sm text-gray-700 dark:text-gray-300">
+                                            ${{ number_format($item->unit_price, 2) }}</p>
                                     </div>
                                     <div class="col-span-4 sm:col-span-3 sm:text-right">
-                                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-0.5">Total</p>
-                                        <p class="text-sm font-bold text-gray-900 dark:text-white">${{ number_format($item->quantity * $item->unit_price, 2) }}</p>
+                                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-0.5">
+                                            Total</p>
+                                        <p class="text-sm font-bold text-gray-900 dark:text-white">
+                                            ${{ number_format($item->quantity * $item->unit_price, 2) }}</p>
                                     </div>
                                 </div>
                             @endforeach
                         </div>
                     </div>
 
+                    @if ($invoice->payments->count() > 0)
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 sm:p-7 shadow-sm">
+                            <h3 class="text-base font-bold text-gray-900 dark:text-white mb-5">Payment History</h3>
+                            <div class="space-y-3">
+                                @foreach ($invoice->payments as $payment)
+                                    <div
+                                        class="flex items-center justify-between p-3 rounded-xl bg-gray-50/50 dark:bg-gray-900/40 border border-gray-100 dark:border-gray-700/60">
+                                        <div>
+                                            <p class="text-sm font-semibold text-gray-900 dark:text-white">
+                                                ${{ number_format($payment->amount, 2) }}</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                {{ $payment->paid_at->format('M d, Y') }} ·
+                                                {{ ucfirst(str_replace('_', ' ', $payment->method)) }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    @if (in_array($invoice->status, ['sent', 'overdue']))
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 sm:p-7 shadow-sm">
+                            <h3 class="text-base font-bold text-gray-900 dark:text-white mb-1">Mark as Paid</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-5">
+                                Record full payment of ${{ number_format($invoice->amount, 2) }} for this invoice
+                            </p>
+
+                            <form action="{{ route('payments.store', $invoice) }}" method="POST" class="space-y-4">
+                                @csrf
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label
+                                            class="block text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Date
+                                            Paid</label>
+                                        <input type="date" name="paid_at"
+                                            min="{{ $invoice->created_at->format('Y-m-d') }}"
+                                            max="{{ now()->format('Y-m-d') }}"
+                                            value="{{ now()->format('Y-m-d') }}"
+                                            required
+                                            class="block w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 transition">
+                                        @error('paid_at')
+                                            <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400">{{ $message }}
+                                            </p>
+                                        @enderror
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Method</label>
+                                        <select name="method" required
+                                            class="block w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 transition">
+                                            <option value="bank_transfer">Bank Transfer</option>
+                                            <option value="cash">Cash</option>
+                                            <option value="credit_card">Credit Card</option>
+                                        </select>
+                                        @error('method')
+                                            <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400">{{ $message }}
+                                            </p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <button type="submit"
+                                    class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl shadow-md shadow-emerald-500/20 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-500 transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span>Mark as Paid — ${{ number_format($invoice->amount, 2) }}</span>
+                                </button>
+                            </form>
+                        </div>
+                    @endif
+
                 </div>
 
                 <!-- ================= SAĞ ALAN / ÖZET PANELİ (4 KOLON - STICKY) ================= -->
                 <div class="lg:col-span-4 sticky top-6 space-y-6">
 
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 shadow-sm">
-                        <div class="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-gray-700">
-                            <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Invoice Details</span>
-                            <span class="font-mono text-xs text-gray-500 dark:text-gray-400 font-medium">#INV-{{ str_pad($invoice->id, 5, '0', STR_PAD_LEFT) }}</span>
+                    <div
+                        class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 shadow-sm">
+                        <div
+                            class="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-gray-700">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Invoice
+                                Details</span>
+                            <span
+                                class="font-mono text-xs text-gray-500 dark:text-gray-400 font-medium">#INV-{{ str_pad($invoice->id, 5, '0', STR_PAD_LEFT) }}</span>
                         </div>
 
                         <!-- Status -->
-                        <div class="py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                        <div
+                            class="py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
                             <span class="text-xs text-gray-500 dark:text-gray-400">Status</span>
                             @if ($invoice->status === 'paid')
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">Paid</span>
+                                <span
+                                    class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">Paid</span>
                             @elseif ($invoice->status === 'sent')
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800">Sent</span>
+                                <span
+                                    class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800">Sent</span>
                             @elseif ($invoice->status === 'overdue')
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800">Overdue</span>
+                                <span
+                                    class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800">Overdue</span>
                             @elseif ($invoice->status === 'cancelled')
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-200 dark:bg-red-500 text-red-600 dark:text-red-200 border border-red-400 dark:border-red-200">Cancelled</span>
+                                <span
+                                    class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-200 dark:bg-red-500 text-red-600 dark:text-red-200 border border-red-400 dark:border-red-200">Cancelled</span>
                             @else
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600">Draft</span>
+                                <span
+                                    class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600">Draft</span>
                             @endif
                         </div>
 
                         <!-- Issue/Due Date -->
-                        <div class="py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                        <div
+                            class="py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
                             <span class="text-xs text-gray-500 dark:text-gray-400">Issued On</span>
-                            <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ $invoice->created_at->format('M d, Y') }}</span>
+                            <span
+                                class="text-sm font-semibold text-gray-900 dark:text-white">{{ $invoice->created_at->format('M d, Y') }}</span>
                         </div>
-                        <div class="py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                        <div
+                            class="py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
                             <span class="text-xs text-gray-500 dark:text-gray-400">Due Date</span>
-                            <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ $invoice->due_date->format('M d, Y') }}</span>
+                            <span
+                                class="text-sm font-semibold text-gray-900 dark:text-white">{{ $invoice->due_date->format('M d, Y') }}</span>
                         </div>
 
                         <!-- Line Item Count -->
-                        <div class="py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                        <div
+                            class="py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
                             <span class="text-xs text-gray-500 dark:text-gray-400">Line Items</span>
-                            <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ $invoice->invoiceItems->count() }}</span>
+                            <span
+                                class="text-sm font-semibold text-gray-900 dark:text-white">{{ $invoice->invoiceItems->count() }}</span>
                         </div>
 
                         <!-- Subtotal / Total Breakdown -->
                         <div class="py-5 space-y-2">
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-500 dark:text-gray-400">Subtotal</span>
-                                <span class="text-gray-900 dark:text-white">${{ number_format($invoice->amount, 2) }}</span>
+                                <span
+                                    class="text-gray-900 dark:text-white">${{ number_format($invoice->amount, 2) }}</span>
                             </div>
                         </div>
 
@@ -162,9 +284,12 @@
                                 <form action="{{ route('invoices.mark-as-sent', $invoice) }}" method="POST">
                                     @csrf
                                     @method('PATCH')
-                                    <button type="submit" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-sm shadow-indigo-600/20 transition cursor-pointer">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                    <button type="submit"
+                                        class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-sm shadow-indigo-600/20 transition cursor-pointer">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                                         </svg>
                                         <span>Mark as Sent</span>
                                     </button>
@@ -172,9 +297,12 @@
                             @endif
 
                             @if ($invoice->status === 'draft')
-                                <a href="{{ route('invoices.edit', $invoice) }}" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-200 text-xs font-semibold hover:bg-zinc-50 dark:hover:bg-zinc-700 transition">
-                                    <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                <a href="{{ route('invoices.edit', $invoice) }}"
+                                    class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-200 text-xs font-semibold hover:bg-zinc-50 dark:hover:bg-zinc-700 transition">
+                                    <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                     </svg>
                                     <span>Edit Invoice</span>
                                 </a>
@@ -182,21 +310,26 @@
 
 
                             <!-- 3. DESTRUCTIVE / TERTIARY ACTIONS (Ayrı ve Zarif) -->
-                            <div class="pt-2 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-center gap-4">
+                            <div
+                                class="pt-2 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-center gap-4">
                                 @if (in_array($invoice->status, ['sent', 'overdue']))
-                                    <form action="{{ route('invoices.cancel', $invoice) }}" method="POST" onsubmit="return confirm('Cancel this invoice? Cancelled invoices are returned to your quota.')">
+                                    <form action="{{ route('invoices.cancel', $invoice) }}" method="POST"
+                                        onsubmit="return confirm('Cancel this invoice? Cancelled invoices are returned to your quota.')">
                                         @csrf
                                         @method('PATCH')
-                                        <button type="submit" class="text-xs font-medium text-amber-500 hover:text-amber-400 transition cursor-pointer">
+                                        <button type="submit"
+                                            class="text-xs font-medium text-amber-500 hover:text-amber-400 transition cursor-pointer">
                                             Cancel Invoice
                                         </button>
                                     </form>
                                 @endif
 
-                                <form action="{{ route('invoices.destroy', $invoice) }}" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this invoice?')">
+                                <form action="{{ route('invoices.destroy', $invoice) }}" method="POST"
+                                    onsubmit="return confirm('Are you sure you want to permanently delete this invoice?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-xs font-medium text-rose-500/80 hover:text-rose-400 transition cursor-pointer">
+                                    <button type="submit"
+                                        class="text-xs font-medium text-rose-500/80 hover:text-rose-400 transition cursor-pointer">
                                         Delete Invoice
                                     </button>
                                 </form>
