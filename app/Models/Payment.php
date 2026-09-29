@@ -14,6 +14,13 @@ class Payment extends Model
         'method'
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'paid_at' => 'date',
+        ];
+    }
+
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
