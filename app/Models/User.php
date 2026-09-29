@@ -26,10 +26,14 @@ class User extends Authenticatable
         'password',
         'plan_id',
         'company_name',
+        'country',
         'address',
         'city',
         'state',
-        'postal_code'
+        'postal_code',
+        'client_type',
+        'identity_no',
+        'tax_number',
     ];
 
     /**

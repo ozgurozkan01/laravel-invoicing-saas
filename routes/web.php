@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/invoices', InvoiceController::class)->except(['store']);
     Route::post('/invoices', [InvoiceController::class, 'store'])->middleware('invoice.limit')->name('invoices.store');
+    Route::post('/invoices/{invoice}/payments', [PaymentController::class, 'store'])->name('payments.store');
     Route::patch('invoices/{invoice}/cancel', [InvoiceController::class, 'cancel'])->name('invoices.cancel');
     Route::patch('invoices/{invoice}/mark-as-sent', [InvoiceController::class, 'markAsSent'])->name('invoices.mark-as-sent');
 });
