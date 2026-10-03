@@ -40,7 +40,6 @@
             <form action="{{ route('clients.store') }}" method="POST" class="space-y-6">
                 @csrf
 
-                <!-- 1. KART: Client Type (En Üstte Seçim) -->
                 <div
                     class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 sm:p-8 shadow-sm">
                     <h3 class="text-base font-bold text-gray-900 dark:text-white mb-1">Client Type</h3>
@@ -48,7 +47,6 @@
                         invoices</p>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <!-- Individual Radio -->
                         <label class="cursor-pointer">
                             <input type="radio" name="client_type" value="individual" x-model="clientType"
                                 class="sr-only">
@@ -66,12 +64,10 @@
                                 </div>
                                 <div>
                                     <p class="text-sm font-semibold text-gray-900 dark:text-white">Individual</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">Identified by National ID</p>
                                 </div>
                             </div>
                         </label>
 
-                        <!-- Corporate Radio -->
                         <label class="cursor-pointer">
                             <input type="radio" name="client_type" value="corporate" x-model="clientType"
                                 class="sr-only">
@@ -89,7 +85,6 @@
                                 </div>
                                 <div>
                                     <p class="text-sm font-semibold text-gray-900 dark:text-white">Corporate</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">Identified by Tax Details</p>
                                 </div>
                             </div>
                         </label>
@@ -99,7 +94,6 @@
                     @enderror
                 </div>
 
-                <!-- 2. KART: Client Info (Kimlik & Şirket Bilgileri) -->
                 <div
                     class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 sm:p-8 shadow-sm">
                     <h3 class="text-base font-bold text-gray-900 dark:text-white mb-1">Client Information</h3>
@@ -108,14 +102,35 @@
                         <span x-show="clientType === 'corporate'" x-cloak>Enter official company and tax details</span>
                     </p>
 
-                    <!-- Bireysel Görünüm -->
                     <div x-show="clientType === 'individual'" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
                             <label class="{{ $labelClass }}">Full Name <span class="text-rose-500">*</span></label>
                             <input type="text" name="name" x-model="name" :required="clientType === 'individual'"
-                                :disabled="clientType !== 'individual'" placeholder="Ad Soyad"
+                                :disabled="clientType !== 'individual'"
                                 class="{{ $inputClass }}">
                             @error('name')
+                                <p class="{{ $errorClass }}">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="{{ $labelClass }}">Company Name <span
+                                    class="text-rose-500">*</span></label>
+                            <input type="text" name="company_name" x-model="company"
+                                :required="clientType === 'individual'" :disabled="clientType !== 'individual'"
+                                class="{{ $inputClass }}">
+                            @error('company_name')
+                                <p class="{{ $errorClass }}">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="{{ $labelClass }}">Tax Office <span
+                                    class="text-rose-500">*</span></label>
+                            <input type="text" name="tax_office" value="{{ old('tax_office') }}"
+                                :required="clientType === 'individual'" :disabled="clientType !== 'individual'"
+                                class="{{ $inputClass }}">
+                            @error('tax_office')
                                 <p class="{{ $errorClass }}">{{ $message }}</p>
                             @enderror
                         </div>
@@ -125,19 +140,20 @@
                                     class="text-rose-500">*</span></label>
                             <input type="text" name="identity_number" value="{{ old('identity_number') }}"
                                 :required="clientType === 'individual'" :disabled="clientType !== 'individual'"
-                                placeholder="National ID / TCKN" class="{{ $inputClass }}">
+                                class="{{ $inputClass }}">
                             @error('identity_number')
                                 <p class="{{ $errorClass }}">{{ $message }}</p>
                             @enderror
                         </div>
+
+
                     </div>
 
-                    <!-- Kurumsal Görünüm -->
                     <div x-show="clientType === 'corporate'" x-cloak class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
                             <label class="{{ $labelClass }}">Contact Name<span class="text-rose-500">*</span></label>
                             <input type="text" name="name" x-model="name" :required="clientType === 'corporate'"
-                                :disabled="clientType !== 'corporate'" placeholder="Yetkili Kişi"
+                                :disabled="clientType !== 'corporate'"
                                 class="{{ $inputClass }}">
                             @error('name')
                                 <p class="{{ $errorClass }}">{{ $message }}</p>
@@ -150,7 +166,7 @@
                                     class="text-rose-500">*</span></label>
                             <input type="text" name="company_name" x-model="company"
                                 :required="clientType === 'corporate'" :disabled="clientType !== 'corporate'"
-                                placeholder="e.g. Acme Corp" class="{{ $inputClass }}">
+                                class="{{ $inputClass }}">
                             @error('company_name')
                                 <p class="{{ $errorClass }}">{{ $message }}</p>
                             @enderror
@@ -161,7 +177,7 @@
                                     class="text-rose-500">*</span></label>
                             <input type="text" name="tax_office" value="{{ old('tax_office') }}"
                                 :required="clientType === 'corporate'" :disabled="clientType !== 'corporate'"
-                                placeholder="Vergi Dairesi (Örn: Beşiktaş)" class="{{ $inputClass }}">
+                                class="{{ $inputClass }}">
                             @error('tax_office')
                                 <p class="{{ $errorClass }}">{{ $message }}</p>
                             @enderror
@@ -172,7 +188,7 @@
                                     class="text-rose-500">*</span></label>
                             <input type="text" name="tax_number" value="{{ old('tax_number') }}"
                                 :required="clientType === 'corporate'" :disabled="clientType !== 'corporate'"
-                                placeholder="Vergi Numarası" class="{{ $inputClass }}">
+                                class="{{ $inputClass }}">
                             @error('tax_number')
                                 <p class="{{ $errorClass }}">{{ $message }}</p>
                             @enderror
@@ -180,7 +196,6 @@
                     </div>
                 </div>
 
-                <!-- 3. KART: Contact Details (İletişim & 100 Ülke Bayraklı Telefon) -->
                 <div
                     class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 sm:p-8 shadow-sm">
                     <div class="border-b border-gray-100 dark:border-gray-700 pb-4 mb-6">
@@ -190,7 +205,6 @@
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                        <!-- Email -->
                         <div>
                             <label for="email" class="{{ $labelClass }}">
                                 Email Address <span class="text-rose-500">*</span>
@@ -202,7 +216,6 @@
                             @enderror
                         </div>
 
-                        <!-- Phone (100 Ülke Bayraklı Bileşen) -->
                         <div class="relative" x-data="{
                             open: false,
                             selected: { code: 'us', dial: '+1', name: '', placeholder: '(555) 000-0000' },
@@ -375,7 +388,6 @@
                     </div>
                 </div>
 
-                <!-- 4. KART: Billing Address (Country Eklendi) -->
                 <div
                     class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 sm:p-8 shadow-sm">
                     <div class="border-b border-gray-100 dark:border-gray-700 pb-4 mb-6">
@@ -444,7 +456,6 @@
                     </div>
                 </div>
 
-                <!-- 5. Alt Butonlar -->
                 <div class="flex items-center justify-end gap-3 pt-2">
                     <a href="{{ route('clients.index') }}"
                         class="px-5 py-2.5 rounded-xl text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition">

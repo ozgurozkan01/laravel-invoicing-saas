@@ -19,14 +19,7 @@
                 </h2>
             </div>
 
-            <a href="{{ route('clients.index') }}"
-                class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-                Cancel
-            </a>
+
         </div>
     </x-slot>
 
@@ -42,16 +35,13 @@
                 }
             }">
 
-                <!-- ================= SOL ALAN ================= -->
                 <div class="lg:col-span-8 space-y-6">
 
-                    <!-- GÜNCELLEME FORMU -->
                     <form id="update-client-form" action="{{ route('clients.update', $client) }}" method="POST"
                         class="space-y-6">
                         @csrf
                         @method('PUT')
 
-                        <!-- 1. KART: Client Type (Sadece Seçim) -->
                         <div
                             class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 sm:p-7 shadow-sm">
                             <h3 class="text-base font-bold text-gray-900 dark:text-white mb-1">Client Type</h3>
@@ -59,7 +49,6 @@
                                 identified on invoices</p>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <!-- Individual Radio -->
                                 <label class="cursor-pointer">
                                     <input type="radio" name="client_type" value="individual" x-model="clientType"
                                         class="sr-only">
@@ -79,13 +68,10 @@
                                         <div>
                                             <p class="text-sm font-semibold text-gray-900 dark:text-white">Individual
                                             </p>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400">Identified by National
-                                                ID</p>
                                         </div>
                                     </div>
                                 </label>
 
-                                <!-- Corporate Radio -->
                                 <label class="cursor-pointer">
                                     <input type="radio" name="client_type" value="corporate" x-model="clientType"
                                         class="sr-only">
@@ -104,8 +90,6 @@
                                         </div>
                                         <div>
                                             <p class="text-sm font-semibold text-gray-900 dark:text-white">Corporate</p>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400">Identified by Tax
-                                                Details</p>
                                         </div>
                                     </div>
                                 </label>
@@ -115,7 +99,6 @@
                             @enderror
                         </div>
 
-                        <!-- 2. KART: Client Info (Kimlik / Şirket Bilgileri) -->
                         <div
                             class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 sm:p-7 shadow-sm">
                             <h3 class="text-base font-bold text-gray-900 dark:text-white mb-1">Client Information</h3>
@@ -126,7 +109,6 @@
                                     details</span>
                             </p>
 
-                            <!-- BIREYSEL GÖRÜNÜM -->
                             <div x-show="clientType === 'individual'" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div>
                                     <label class="{{ $labelClass }}">Full Name <span
@@ -140,19 +122,41 @@
                                 </div>
 
                                 <div>
+                                    <label class="{{ $labelClass }}">Company Name <span
+                                            class="text-rose-500">*</span></label>
+                                    <input type="text" name="company_name" x-model="company"
+                                        :required="clientType === 'corporate'" :disabled="clientType !== 'corporate'"
+                                        class="{{ $inputClass }}">
+                                    @error('company_name')
+                                        <p class="{{ $errorClass }}">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label class="{{ $labelClass }}">Tax Office <span
+                                            class="text-rose-500">*</span></label>
+                                    <input type="text" name="tax_office"
+                                        value="{{ old('tax_office', $client->tax_office) }}"
+                                        :required="clientType === 'corporate'" :disabled="clientType !== 'corporate'"
+                                        class="{{ $inputClass }}">
+                                    @error('tax_office')
+                                        <p class="{{ $errorClass }}">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
                                     <label class="{{ $labelClass }}">National ID Number <span
                                             class="text-rose-500">*</span></label>
                                     <input type="text" name="identity_number"
                                         value="{{ old('identity_number', $client->identity_number) }}"
-                                        :required="clientType === 'individual'" :disabled="clientType !== 'individual'"
-                                        class="{{ $inputClass }}">
+                                        :required="clientType === 'individual'"
+                                        :disabled="clientType !== 'individual'" class="{{ $inputClass }}">
                                     @error('identity_number')
                                         <p class="{{ $errorClass }}">{{ $message }}</p>
                                     @enderror
                                 </div>
                             </div>
 
-                            <!-- KURUMSAL GÖRÜNÜM -->
                             <div x-show="clientType === 'corporate'" x-cloak
                                 class="grid grid-cols-1 sm:grid-cols-2 gap-5">
 
@@ -160,8 +164,8 @@
                                     <label class="{{ $labelClass }}">Contact Name<span
                                             class="text-rose-500">*</span></label>
                                     <input type="text" name="name" x-model="name"
-                                        :required="clientType === 'corporate'" :disabled="clientType !== 'corporate'"
-                                        class="{{ $inputClass }}">
+                                        :required="clientType === 'corporate'"
+                                        :disabled="clientType !== 'corporate'" class="{{ $inputClass }}">
                                     @error('name')
                                         <p class="{{ $errorClass }}">{{ $message }}</p>
                                     @enderror
@@ -171,8 +175,8 @@
                                     <label class="{{ $labelClass }}">Company Name <span
                                             class="text-rose-500">*</span></label>
                                     <input type="text" name="company_name" x-model="company"
-                                        :required="clientType === 'corporate'" :disabled="clientType !== 'corporate'"
-                                        class="{{ $inputClass }}">
+                                        :required="clientType === 'corporate'"
+                                        :disabled="clientType !== 'corporate'" class="{{ $inputClass }}">
                                     @error('company_name')
                                         <p class="{{ $errorClass }}">{{ $message }}</p>
                                     @enderror
@@ -204,7 +208,6 @@
                             </div>
                         </div>
 
-                        <!-- 3. KART: Contact Details (Sadece İletişim) -->
                         <div
                             class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 sm:p-7 shadow-sm">
                             <h3 class="text-base font-bold text-gray-900 dark:text-white mb-1">Contact Details</h3>
@@ -222,7 +225,6 @@
                                     @enderror
                                 </div>
 
-                                <!-- Phone Number (Kayıtlı Veriyi Otomatik Ayrıştıran 100 Ülke Bileşeni) -->
                                 <div class="relative" x-data="{
                                     open: false,
                                     selected: { code: 'tr', dial: '+90', name: 'Turkey', placeholder: '555 123 45 67' },
@@ -354,13 +356,11 @@
                                         Phone Number <span class="text-rose-500">*</span>
                                     </label>
 
-                                    <!-- Sunucuya gidecek alan kodu -->
                                     <input type="hidden" name="country_dial_code" :value="selected.dial">
 
                                     <div
                                         class="relative flex rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50 shadow-sm focus-within:bg-white dark:focus-within:bg-gray-900 focus-within:ring-2 focus-within:ring-indigo-600 focus-within:border-transparent transition">
 
-                                        <!-- Bayrak ve Kod Butonu -->
                                         <button type="button" @click="open = !open"
                                             class="flex items-center gap-2 pl-3.5 pr-2.5 py-2.5 border-r border-gray-200 dark:border-gray-700 bg-gray-100/50 dark:bg-gray-800/40 hover:bg-gray-100 dark:hover:bg-gray-800/80 transition rounded-l-xl flex-shrink-0 cursor-pointer">
                                             <img :src="`https://flagcdn.com/w20/${selected.code}.png`"
@@ -379,12 +379,10 @@
                                             </svg>
                                         </button>
 
-                                        <!-- Numara Girişi (Alpine ile bağlanmış hali) -->
                                         <input type="tel" name="phone" id="phone" x-model="phoneInput"
                                             :placeholder="selected.placeholder" required
                                             class="block w-full px-3.5 py-2.5 bg-transparent border-0 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-0 focus:outline-none">
 
-                                        <!-- Açılır Popover Menü -->
                                         <div x-show="open" x-cloak @click.outside="open = false"
                                             x-transition:enter="transition ease-out duration-100"
                                             x-transition:enter-start="opacity-0 translate-y-2"
@@ -419,7 +417,6 @@
                             </div>
                         </div>
 
-                        <!-- 4. KART: Billing Address -->
                         <div
                             class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 sm:p-7 shadow-sm">
                             <h3 class="text-base font-bold text-gray-900 dark:text-white mb-1">Billing Address</h3>
@@ -484,7 +481,6 @@
                         </div>
                     </form>
 
-                    <!-- KART 5: Danger Zone (Müşteriyi Sil) -->
                     <div
                         class="bg-rose-50/40 dark:bg-rose-950/20 rounded-2xl border border-rose-200 dark:border-rose-900/60 p-6 shadow-sm">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -512,7 +508,6 @@
 
                 </div>
 
-                <!-- ================= SAĞ ALAN (STICKY) ================= -->
                 <div class="lg:col-span-4 lg:sticky lg:top-6 space-y-6">
                     <div
                         class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 shadow-sm">
@@ -535,7 +530,6 @@
                                 class="font-semibold text-gray-900 dark:text-white">{{ $client->created_at->format('M d, Y') }}</span>
                         </div>
 
-                        <!-- Tıklanabilir Faturalar -->
                         <a href="{{ route('invoices.index', ['client_id' => $client->id]) }}"
                             class="py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center text-xs group hover:text-indigo-600 transition">
                             <span
