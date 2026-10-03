@@ -45,7 +45,7 @@ class InvoicePolicy
      */
     public function delete(User $user, Invoice $invoice): bool
     {
-        return $user->id === $invoice->user_id;
+        return $user->id === $invoice->user_id && $invoice->canBeDeleted();
     }
 
     /**

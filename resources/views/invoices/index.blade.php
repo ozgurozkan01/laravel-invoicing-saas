@@ -21,7 +21,18 @@
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <div class="w-full max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+
+            @if (session('error'))
+                <div
+                    class="mb-4 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm flex items-center gap-2">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{{ session('error') }}</span>
+                </div>
+            @endif
 
             @if (session('success'))
                 <div
@@ -42,13 +53,14 @@
                             class="bg-gray-50/50 dark:bg-gray-900/50 text-xs font-semibold text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-gray-700">
                             <tr>
                                 <th class="w-[12%] px-6 py-4">Invoice ID</th>
-                                <th class="w-[17%] px-6 py-4">Title</th>
-                                <th class="w-[19%] px-6 py-4">Owner / Client</th>
+                                <th class="w-[15%] px-6 py-4">Title</th>
+                                <th class="w-[15%] px-6 py-4">Owner / Client</th>
                                 <th class="w-[12%] px-6 py-4 text-right">Amount</th>
-                                <th class="w-[12%] px-6 py-4 text-center">Status</th>
-                                <th class="w-[10%] px-6 py-4 whitespace-nowrap">Issue On</th>
-                                <th class="w-[10%] px-6 py-4 whitespace-nowrap">Due Date</th>
-                                <th class="w-[8%] px-6 py-4 text-right">Actions</th>
+                                <th class="w-[10%] px-6 py-4 text-center">Invoice Status</th>
+                                <th class="w-[10%] px-6 py-4 text-center">Payment Status</th>
+                                <th class="w-[8%] px-6 py-4 text-center whitespace-nowrap">Issue On</th>
+                                <th class="w-[8%] px-6 py-4 text-center whitespace-nowrap">Due Date</th>
+                                <th class="w-[8%] px-6 py-4 text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
@@ -87,56 +99,39 @@
                                         </div>
                                     </td>
 
-                                    <td class="px-6 py-4 font-bold text-gray-900 dark:text-white">
+                                    <td class="px-6 py-4 text-right font-bold text-gray-900 dark:text-white">
                                         ${{ number_format($invoice->amount, 2) }}
                                     </td>
 
-                                    <!-- Status Badges -->
-                                    <td class="px-6 py-4">
-                                        @if ($invoice->status === 'paid')
-                                            <span
-                                                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                                                Paid
-                                            </span>
-                                        @elseif ($invoice->status === 'sent')
-                                            <span
-                                                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
-                                                Sent
-                                            </span>
-                                        @elseif ($invoice->status === 'overdue')
-                                            <span
-                                                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
-                                                Overdue
-                                            </span>
-                                        @elseif ($invoice->status === 'cancelled')
-                                            <span
-                                                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-200 dark:bg-red-500 text-red-600 dark:text-red-200 border border-red-400 dark:border-red-200">
-                                                Cancelled
-                                            </span>
-                                        @else
-                                            <span
-                                                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
-                                                Draft
-                                            </span>
-                                        @endif
+                                    <td class="px-6 py-4 text-center">
+                                        <span data-status="{{ $invoice->status->value }}"
+                                            class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border {{ $invoice->status->badgeClass() }}">
+                                            {{ $invoice->status->label() }}
+                                        </span>
                                     </td>
 
-                                    <!-- Due Date -->
-                                    <td class="px-6 py-4 text-xs text-gray-500 dark:text-gray-400">
-                                        {{ \Carbon\Carbon::parse($invoice->due_date)->format('M d, Y') }}
+                                    <td class="px-6 py-4 text-center">
+                                        <span data-status="{{ $invoice->status->value }}"
+                                            class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border {{ $invoice->payment_status->badgeClass() }}">
+                                            {{ $invoice->payment_status->label() }}
+                                        </span>
                                     </td>
 
-                                    <!-- Issue On (Dolu alan) -->
-                                    <td class="px-6 py-4 text-xs text-gray-500 dark:text-gray-400">
+                                    <td
+                                        class="px-6 py-4 text-center text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
                                         {{ \Carbon\Carbon::parse($invoice->created_at)->format('M d, Y') }}
                                     </td>
 
-                                    <!-- Modern Actions (İkon Butonlar) -->
-                                    <td class="px-2 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-0">
-                                            @if ($invoice->status === 'draft')
+                                    <td
+                                        class="px-6 py-4 text-center text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                                        {{ \Carbon\Carbon::parse($invoice->due_date)->format('M d, Y') }}
+                                    </td>
+
+                                    <td class="px-4 py-4 text-center">
+                                        <div class="inline-flex items-center justify-center gap-1.5">
+                                            @if ($invoice->status->value === 'draft')
                                                 <a href="{{ route('invoices.edit', $invoice) }}" title="Edit Invoice"
-                                                    class="p-2 text-indigo-400 hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg transition-colors">
+                                                    class="p-1 text-indigo-400 hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg transition-colors">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -144,9 +139,26 @@
                                                             d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                                     </svg>
                                                 </a>
+
+                                                <form action="{{ route('invoices.destroy', $invoice) }}" method="POST"
+                                                    class="inline-flex"
+                                                    onsubmit="return confirm('Are you sure you want to delete this invoice?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" title="Delete Invoice"
+                                                        class="p-1 text-rose-400 hover:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                        </svg>
+                                                    </button>
+                                                </form>
                                             @endif
+
                                             <a href="{{ route('invoices.show', $invoice) }}" title="View Invoice"
-                                                class="p-0 text-gray-400 hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700/60 rounded-lg transition-colors">
+                                                class="p-1 text-gray-400 hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700/60 rounded-lg transition-colors">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -154,27 +166,12 @@
                                                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                                 </svg>
                                             </a>
-                                            <form action="{{ route('invoices.destroy', $invoice) }}" method="POST"
-                                                class="inline"
-                                                onsubmit="return confirm('Are you sure you want to delete this invoice?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" title="Delete Invoice"
-                                                    class="p-2 text-rose-400 hover:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                    </svg>
-                                                </button>
-                                            </form>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-6 py-16 text-center">
+                                    <td colspan="8" class="px-6 py-16 text-center">
                                         <div class="flex flex-col items-center justify-center">
                                             <div
                                                 class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 mb-3">

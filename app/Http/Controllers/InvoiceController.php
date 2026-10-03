@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Invoice;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Mail\InvoiceSentMail;
+use App\Mail\InvoiceCancelledMail;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Mail;
 
 class InvoiceController extends Controller
 {
@@ -66,7 +71,7 @@ class InvoiceController extends Controller
                 $invoice->invoiceItems()->create($item);
             }
 
-            $total = $invoice->invoiceItems->sum(fn ($item) => $item->quantity * $item->unit_price);
+            $total = $invoice->invoiceItems->sum(fn($item) => $item->quantity * $item->unit_price);
             $invoice->update(['amount' => $total]);
         });
 
@@ -90,8 +95,7 @@ class InvoiceController extends Controller
     {
         $this->authorize('update', $invoice);
 
-        if ($invoice->status !== 'draft') 
-        {
+        if ($invoice->status !== 'draft') {
             return redirect()->route('invoices.show', $invoice)->with('error', 'Only draft invoices can be sent!');
         }
 
@@ -107,8 +111,7 @@ class InvoiceController extends Controller
     {
         $this->authorize('update', $invoice);
 
-        if ($invoice->status != 'draft') 
-        {
+        if ($invoice->status != 'draft') {
             return redirect()->route('invoices.show', $invoice)->with('error', 'Only draft invoices can be sent!');
         }
 
@@ -139,12 +142,11 @@ class InvoiceController extends Controller
 
             $invoice->invoiceItems()->delete();
 
-            foreach ($validated['items'] as $item) 
-            {
+            foreach ($validated['items'] as $item) {
                 $invoice->invoiceItems()->create($item);
             }
 
-            $total = $invoice->invoiceItems->sum(fn ($item) => $item->quantity * $item->unit_price);
+            $total = $invoice->invoiceItems->sum(fn($item) => $item->quantity * $item->unit_price);
             $invoice->update(['amount' => $total]);
         });
 
@@ -156,11 +158,14 @@ class InvoiceController extends Controller
      */
     public function destroy(Invoice $invoice)
     {
-        $this->authorize('delete', $invoice);
+        if (Gate::denies('delete', $invoice))
+        {
+            return back()->with('error', 'Only draft invoices can be deleted!');
+        }
 
         $invoice->delete();
 
-        return redirect()->route('invoices.index')->with('success', 'Invoice is deleted successfully!');
+        return redirect()->route('invoices.index')->with('success', 'Invoice has been deleted successfully!');
     }
 
     public function cancel(Invoice $invoice)
@@ -169,6 +174,10 @@ class InvoiceController extends Controller
 
         $invoice->update(['status' => 'cancelled']);
 
+        if ($invoice->client && $invoice->client->email) {
+            Mail::to($invoice->client->email)->send(new InvoiceCancelledMail($invoice));
+        }
+
         return redirect()->route('invoices.show', $invoice)->with('success', 'The invoice has been canceled successfully!');
     }
 
@@ -176,13 +185,27 @@ class InvoiceController extends Controller
     {
         $this->authorize('update', $invoice);
 
-        if ($invoice->status !== 'draft')
-        {
+        if ($invoice->status->value !== 'draft') {
             return redirect()->route('invoices.show', $invoice)->with('error', 'Only draft invoices can be sent!');
         }
 
         $invoice->update(['status' => 'sent']);
 
+        if ($invoice->client && $invoice->client->email) {
+            Mail::to($invoice->client->email)->send(new InvoiceSentMail($invoice));
+        }
+
         return redirect()->route('invoices.show', $invoice)->with('success', 'The invoice has been marked as sent!');
+    }
+
+    public function downloadPdf(Invoice $invoice)
+    {
+        $invoice->load(['client', 'invoiceItems']);
+
+        $pdf = Pdf::loadView('invoices.pdf', compact('invoice'));
+
+        $filename = 'INV-' . str_pad($invoice->id, 5, '0', STR_PAD_LEFT) . '.pdf';
+        
+        return $pdf->download($filename);
     }
 }
